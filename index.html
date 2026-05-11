@@ -6,7 +6,11 @@
   <title>Perfect Jewel - Dashboard</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
   <style>
@@ -22,20 +26,28 @@
       transform: translateY(-8px) scale(1.02);
       box-shadow: 0 25px 40px rgba(0,0,0,0.08);
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
   </style>
 </head>
 
-<body class="h-full bg-gradient-to-br from-gray-100 to-gray-200">
+<body class="h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 dark:text-white transition-colors duration-300">
 
 <!-- Login -->
 <div id="login-screen" class="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-700 to-indigo-600">
-  <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md">
-    <h1 class="text-4xl font-bold text-indigo-600 text-center mb-6">Perfect Jewel</h1>
+  <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 w-full max-w-md animate-fade-in">
+    <h1 class="text-4xl font-bold text-indigo-600 dark:text-indigo-400 text-center mb-6">Perfect Jewel</h1>
 
-    <input id="username" placeholder="Username" class="w-full mb-4 px-5 py-3 border rounded-2xl">
-    <input id="password" type="password" placeholder="Password" class="w-full mb-4 px-5 py-3 border rounded-2xl">
+    <input id="username" placeholder="Username" class="w-full mb-4 px-5 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-2xl">
+    <input id="password" type="password" placeholder="Password" class="w-full mb-4 px-5 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-2xl">
 
-    <button onclick="login()" class="w-full py-3 bg-indigo-600 text-white rounded-2xl">Login</button>
+    <button onclick="login()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl transition">Login</button>
   </div>
 </div>
 
@@ -43,13 +55,13 @@
 <div id="main-app" class="hidden flex h-screen">
 
   <!-- Sidebar -->
-  <div class="w-64 bg-white border-r hidden md:flex flex-col">
-    <div class="p-6 border-b text-2xl font-bold text-indigo-600">Perfect Jewel</div>
+  <div class="w-64 bg-white dark:bg-gray-800 border-r dark:border-gray-700 hidden md:flex flex-col transition-colors duration-300">
+    <div class="p-6 border-b dark:border-gray-700 text-2xl font-bold text-indigo-600 dark:text-indigo-400">Perfect Jewel</div>
 
     <div class="p-4 space-y-2">
-      <button onclick="showPage('dashboard')" class="w-full text-left p-3 rounded-xl hover:bg-gray-100">Dashboard</button>
-      <button onclick="showPage('products')" class="w-full text-left p-3 rounded-xl hover:bg-gray-100">Products</button>
-      <button onclick="showPage('cash')" class="w-full text-left p-3 rounded-xl hover:bg-gray-100">Cash</button>
+      <button onclick="showPage('dashboard')" class="w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition">Dashboard</button>
+      <button onclick="showPage('products')" class="w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition">Products</button>
+      <button onclick="showPage('cash')" class="w-full text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition">Cash</button>
     </div>
   </div>
 
@@ -57,19 +69,39 @@
   <div class="flex-1 flex flex-col">
 
     <!-- Top -->
-    <div class="bg-white border-b px-6 py-4 flex justify-between items-center">
+    <div class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center transition-colors duration-300 relative">
       <h2 id="page-title" class="text-xl font-semibold">Dashboard</h2>
 
       <div class="flex items-center gap-3">
-        <div id="cash-top" class="font-bold text-emerald-600"></div>
+        <div id="cash-top" class="font-bold text-emerald-600 dark:text-emerald-400"></div>
 
-        <button onclick="showInvestedAmount()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-xl">
+        <button onclick="showInvestedAmount()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-xl hover:opacity-90 transition">
           Invested
         </button>
 
-        <button onclick="adjustCash()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl">
+        <button onclick="adjustCash()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl transition">
           + Cash
         </button>
+
+        <!-- Settings Dropdown -->
+        <div class="relative ml-2">
+          <button onclick="toggleSettings()" class="text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 text-xl transition p-2">
+            <i class="fa-solid fa-gear"></i>
+          </button>
+
+          <div id="settings-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border dark:border-gray-700 overflow-hidden z-50 animate-fade-in">
+            <button onclick="toggleDarkMode()" class="w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 transition">
+              <i class="fa-solid fa-moon w-5"></i> Toggle Mode
+            </button>
+            <button class="w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 transition">
+              <i class="fa-solid fa-ellipsis w-5"></i> More
+            </button>
+            <div class="border-t dark:border-gray-700"></div>
+            <button onclick="logout()" class="w-full text-left px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2 transition">
+              <i class="fa-solid fa-arrow-right-from-bracket w-5"></i> Logout
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -77,7 +109,13 @@
     <div class="p-6 overflow-auto">
 
       <!-- Dashboard -->
-      <div id="dashboard-page">
+      <div id="dashboard-page" class="animate-fade-in">
+        <!-- Greeting -->
+        <div class="mb-6 p-6 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg animate-fade-in">
+          <h3 class="text-2xl font-bold" id="welcome-message">Welcome!</h3>
+          <p class="text-indigo-100 mt-1">Here is the latest update on your Perfect Jewel inventory.</p>
+        </div>
+
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
           <div class="stat-card p-5 rounded-2xl">
@@ -102,23 +140,18 @@
 
         </div>
 
-        <!-- Only ROI Chart remains -->
-        <div class="p-6 rounded-2xl shadow-lg bg-white/70 backdrop-blur">
-          <h3 class="mb-4 font-semibold">ROI Distribution</h3>
-          <canvas id="roiChart"></canvas>
-        </div>
       </div>
 
       <!-- Products -->
-      <div id="products-page" class="hidden">
+      <div id="products-page" class="hidden animate-fade-in">
 
         <div class="flex gap-3 mb-4">
           <input id="search" placeholder="Search..." onkeyup="filterProducts()" class="flex-1 px-4 py-2 border rounded-xl">
           <button onclick="showAddProductModal()" class="bg-indigo-600 text-white px-4 rounded-xl">Add</button>
         </div>
 
-        <table class="w-full bg-white rounded-xl overflow-hidden">
-          <thead class="bg-gray-100">
+        <table class="w-full bg-white dark:bg-gray-800 rounded-xl overflow-hidden">
+          <thead class="bg-gray-100 dark:bg-gray-700">
             <tr>
               <th class="p-3 text-left">Name</th>
               <th class="p-3">Cost</th>
@@ -133,7 +166,7 @@
       </div>
 
       <!-- Cash -->
-      <div id="cash-page" class="hidden">
+      <div id="cash-page" class="hidden animate-fade-in">
         <div id="cash-log" class="space-y-3"></div>
       </div>
 
@@ -142,16 +175,16 @@
 </div>
 
 <!-- Modal -->
-<div id="product-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center">
-  <div class="bg-white p-6 rounded-2xl w-80">
+<div id="product-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl w-80 animate-fade-in">
 
     <form id="product-form" class="space-y-3">
-      <input id="name" placeholder="Name" required class="w-full p-2 border rounded">
-      <input id="cost" type="number" placeholder="Cost" required class="w-full p-2 border rounded">
-      <input id="selling" type="number" placeholder="Selling" required class="w-full p-2 border rounded">
-      <input id="stock" type="number" placeholder="Stock" class="w-full p-2 border rounded">
+      <input id="name" placeholder="Name" required class="w-full p-2 border dark:border-gray-700 dark:bg-gray-900 rounded">
+      <input id="cost" type="number" placeholder="Cost" required class="w-full p-2 border dark:border-gray-700 dark:bg-gray-900 rounded">
+      <input id="selling" type="number" placeholder="Selling" required class="w-full p-2 border dark:border-gray-700 dark:bg-gray-900 rounded">
+      <input id="stock" type="number" placeholder="Stock" class="w-full p-2 border dark:border-gray-700 dark:bg-gray-900 rounded">
 
-      <button class="w-full bg-indigo-600 text-white p-2 rounded">Save</button>
+      <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded transition">Save</button>
     </form>
 
   </div>
@@ -161,14 +194,47 @@
 let products = JSON.parse(localStorage.getItem('products')) || [];
 let cashBalance = parseFloat(localStorage.getItem('cashBalance')) || 0;
 let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+let currentUser = "";
 
 function login() {
-  if (username.value === "feluna" && password.value === "1234") {
-    login-screen.classList.add('hidden');
-    main-app.classList.remove('hidden');
+  const usernameVal = document.getElementById('username').value;
+  const passwordVal = document.getElementById('password').value;
+  if (usernameVal && passwordVal === "1234") {
+    currentUser = usernameVal;
+    document.getElementById('welcome-message').textContent = `Welcome, ${currentUser}!`;
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('main-app').classList.remove('hidden');
     renderDashboard();
   }
 }
+
+function toggleSettings() {
+  const menu = document.getElementById('settings-menu');
+  menu.classList.toggle('hidden');
+}
+
+function toggleDarkMode() {
+  document.documentElement.classList.toggle('dark');
+  toggleSettings(); // Close menu after toggle
+}
+
+function logout() {
+  currentUser = "";
+  document.getElementById('username').value = "";
+  document.getElementById('password').value = "";
+  document.getElementById('main-app').classList.add('hidden');
+  document.getElementById('login-screen').classList.remove('hidden');
+  toggleSettings(); // Close menu
+}
+
+// Close settings menu when clicking outside
+document.addEventListener('click', function(event) {
+  const menu = document.getElementById('settings-menu');
+  const gearButton = document.querySelector('button[onclick="toggleSettings()"]');
+  if (!menu.classList.contains('hidden') && !menu.contains(event.target) && !gearButton.contains(event.target)) {
+    menu.classList.add('hidden');
+  }
+});
 
 function showInvestedAmount() {
   const invested = products.reduce((sum, p) => sum + (p.cost * p.stock), 0);
@@ -176,32 +242,17 @@ function showInvestedAmount() {
 }
 
 function renderDashboard() {
-  cash-balance.textContent = "$" + cashBalance.toFixed(2);
-  cash-top.textContent = "$" + cashBalance.toFixed(2);
-  total-products.textContent = products.length;
+  document.getElementById('cash-balance').textContent = "$" + cashBalance.toFixed(2);
+  document.getElementById('cash-top').textContent = "$" + cashBalance.toFixed(2);
+  document.getElementById('total-products').textContent = products.length;
 
   let total = products.reduce((s,p)=>s+p.cost*p.stock,0);
   let profit = products.reduce((s,p)=>s+(p.selling-p.cost)*p.stock,0);
 
-  inventory-value.textContent = "$"+total.toFixed(2);
-  profit-potential.textContent = "$"+profit.toFixed(2);
+  document.getElementById('inventory-value').textContent = "$"+total.toFixed(2);
+  document.getElementById('profit-potential').textContent = "$"+profit.toFixed(2);
 
   renderProducts();
-  updateChart();
-}
-
-function updateChart() {
-  const ctx = document.getElementById('roiChart');
-  new Chart(ctx, {
-    type:'pie',
-    data:{
-      labels: products.map(p=>p.name),
-      datasets:[{
-        data: products.map(p=>((p.selling-p.cost)/p.cost*100)||0),
-        backgroundColor:['#6366f1','#a855f7','#f43f5e','#10b981','#f59e0b']
-      }]
-    }
-  });
 }
 
 function showPage(p){
@@ -210,7 +261,7 @@ function showPage(p){
 }
 
 function renderProducts(list=products){
-  products-table.innerHTML = list.map(p=>`
+  document.getElementById('products-table').innerHTML = list.map(p=>`
     <tr>
       <td class="p-2">${p.name}</td>
       <td class="p-2">$${p.cost}</td>
@@ -229,25 +280,25 @@ function deleteProduct(id){
 }
 
 function filterProducts(){
-  let t = search.value.toLowerCase();
+  let t = document.getElementById('search').value.toLowerCase();
   renderProducts(products.filter(p=>p.name.toLowerCase().includes(t)));
 }
 
 function showAddProductModal(){
-  product-modal.classList.remove('hidden');
+  document.getElementById('product-modal').classList.remove('hidden');
 }
 
-product-form.onsubmit = e=>{
+document.getElementById('product-form').onsubmit = e=>{
   e.preventDefault();
   products.push({
     id:Date.now(),
-    name:name.value,
-    cost:+cost.value,
-    selling:+selling.value,
-    stock:+stock.value
+    name:document.getElementById('name').value,
+    cost:+document.getElementById('cost').value,
+    selling:+document.getElementById('selling').value,
+    stock:+document.getElementById('stock').value
   });
   localStorage.setItem('products',JSON.stringify(products));
-  product-modal.classList.add('hidden');
+  document.getElementById('product-modal').classList.add('hidden');
   renderDashboard();
 }
 
