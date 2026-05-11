@@ -4,381 +4,262 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Perfect Jewel - Dashboard</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  
+
   <style>
     body { font-family: 'Segoe UI', system-ui, sans-serif; }
-    .stat-card { transition: all 0.3s; }
-    .stat-card:hover { transform: translateY(-6px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+
+    .stat-card {
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .stat-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 25px 40px rgba(0,0,0,0.08);
+    }
   </style>
 </head>
-<body class="h-full bg-gray-50">
 
-<!-- Login Screen -->
+<body class="h-full bg-gradient-to-br from-gray-100 to-gray-200">
+
+<!-- Login -->
 <div id="login-screen" class="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-700 to-indigo-600">
-  <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md mx-4">
-    <div class="text-center mb-8">
-      <h1 class="text-4xl font-bold text-indigo-600">Perfect Jewel</h1>
-      <p class="text-gray-500 mt-2">Mini Business Dashboard</p>
-    </div>
-    <div class="space-y-4">
-      <input type="text" id="username" placeholder="Username" 
-             class="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-indigo-500">
-      <input type="password" id="password" placeholder="Password" 
-             class="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-indigo-500">
-      <button onclick="login()" 
-              class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-semibold hover:bg-indigo-700">
-        Login
-      </button>
-    </div>
+  <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md">
+    <h1 class="text-4xl font-bold text-indigo-600 text-center mb-6">Perfect Jewel</h1>
+
+    <input id="username" placeholder="Username" class="w-full mb-4 px-5 py-3 border rounded-2xl">
+    <input id="password" type="password" placeholder="Password" class="w-full mb-4 px-5 py-3 border rounded-2xl">
+
+    <button onclick="login()" class="w-full py-3 bg-indigo-600 text-white rounded-2xl">Login</button>
   </div>
 </div>
 
-<!-- Main Dashboard -->
+<!-- App -->
 <div id="main-app" class="hidden flex h-screen">
 
   <!-- Sidebar -->
   <div class="w-64 bg-white border-r hidden md:flex flex-col">
-    <div class="p-6 border-b">
-      <h1 class="text-3xl font-bold text-indigo-600">Perfect Jewel</h1>
-    </div>
-    <div class="p-4">
-      <button onclick="showPage('dashboard')" class="nav-btn active w-full text-left px-4 py-3 rounded-2xl flex items-center gap-3 text-gray-700 hover:bg-gray-100">
-        <i class="fas fa-home"></i> Dashboard
-      </button>
-      <button onclick="showPage('products')" class="nav-btn w-full text-left px-4 py-3 rounded-2xl flex items-center gap-3 text-gray-700 hover:bg-gray-100">
-        <i class="fas fa-box"></i> Products
-      </button>
-      <button onclick="showPage('cash')" class="nav-btn w-full text-left px-4 py-3 rounded-2xl flex items-center gap-3 text-gray-700 hover:bg-gray-100">
-        <i class="fas fa-money-bill-wave"></i> Cash
-      </button>
+    <div class="p-6 border-b text-2xl font-bold text-indigo-600">Perfect Jewel</div>
+
+    <div class="p-4 space-y-2">
+      <button onclick="showPage('dashboard')" class="w-full text-left p-3 rounded-xl hover:bg-gray-100">Dashboard</button>
+      <button onclick="showPage('products')" class="w-full text-left p-3 rounded-xl hover:bg-gray-100">Products</button>
+      <button onclick="showPage('cash')" class="w-full text-left p-3 rounded-xl hover:bg-gray-100">Cash</button>
     </div>
   </div>
 
-  <!-- Main Content -->
-  <div class="flex-1 flex flex-col overflow-hidden">
-    <!-- Top Bar -->
+  <!-- Main -->
+  <div class="flex-1 flex flex-col">
+
+    <!-- Top -->
     <div class="bg-white border-b px-6 py-4 flex justify-between items-center">
-      <h2 id="page-title" class="text-2xl font-semibold">Dashboard</h2>
-      <div class="flex items-center gap-4">
-        <div id="welcome-user" class="text-lg font-medium text-gray-700"></div>
-        <div id="cash-top" class="font-bold text-xl text-emerald-600"></div>
-        <button onclick="adjustCash()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-2xl hover:bg-indigo-700 text-sm flex items-center gap-2">
-          <i class="fas fa-plus"></i> Cash
+      <h2 id="page-title" class="text-xl font-semibold">Dashboard</h2>
+
+      <div class="flex items-center gap-3">
+        <div id="cash-top" class="font-bold text-emerald-600"></div>
+
+        <button onclick="showInvestedAmount()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-xl">
+          Invested
+        </button>
+
+        <button onclick="adjustCash()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl">
+          + Cash
         </button>
       </div>
     </div>
 
     <!-- Pages -->
-    <div class="flex-1 overflow-auto p-6 md:p-8">
+    <div class="p-6 overflow-auto">
 
-      <!-- Dashboard Page -->
+      <!-- Dashboard -->
       <div id="dashboard-page">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border">
-            <p class="text-gray-500">Cash Balance</p>
-            <p id="cash-balance" class="text-4xl font-bold text-emerald-600 mt-2"></p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+          <div class="stat-card p-5 rounded-2xl">
+            <p class="text-gray-500">Cash</p>
+            <p id="cash-balance" class="text-2xl font-bold text-emerald-600"></p>
           </div>
-          <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border">
-            <p class="text-gray-500">Total Products</p>
-            <p id="total-products" class="text-4xl font-bold mt-2"></p>
+
+          <div class="stat-card p-5 rounded-2xl">
+            <p class="text-gray-500">Products</p>
+            <p id="total-products" class="text-2xl font-bold"></p>
           </div>
-          <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border">
-            <p class="text-gray-500">Inventory Value</p>
-            <p id="inventory-value" class="text-4xl font-bold mt-2"></p>
+
+          <div class="stat-card p-5 rounded-2xl">
+            <p class="text-gray-500">Inventory</p>
+            <p id="inventory-value" class="text-2xl font-bold"></p>
           </div>
-          <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border">
-            <p class="text-gray-500">Profit Potential</p>
-            <p id="profit-potential" class="text-4xl font-bold text-emerald-600 mt-2"></p>
+
+          <div class="stat-card p-5 rounded-2xl">
+            <p class="text-gray-500">Profit</p>
+            <p id="profit-potential" class="text-2xl font-bold text-emerald-600"></p>
           </div>
+
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="bg-white p-6 rounded-3xl shadow-sm border">
-            <h3 class="font-semibold mb-4">Inventory Value Trend</h3>
-            <canvas id="valueChart" height="120"></canvas>
-          </div>
-          <div class="bg-white p-6 rounded-3xl shadow-sm border">
-            <h3 class="font-semibold mb-4">Top Products by ROI</h3>
-            <canvas id="roiChart" height="120"></canvas>
-          </div>
+        <!-- Only ROI Chart remains -->
+        <div class="p-6 rounded-2xl shadow-lg bg-white/70 backdrop-blur">
+          <h3 class="mb-4 font-semibold">ROI Distribution</h3>
+          <canvas id="roiChart"></canvas>
         </div>
       </div>
 
-      <!-- Products Page -->
+      <!-- Products -->
       <div id="products-page" class="hidden">
-        <div class="flex flex-col sm:flex-row justify-between gap-4 mb-6">
-          <input type="text" id="search" placeholder="Search products..." 
-                 class="border border-gray-300 rounded-2xl px-5 py-3 flex-1 focus:outline-none focus:border-indigo-500"
-                 onkeyup="filterProducts()">
-          <button onclick="showAddProductModal()" 
-                  class="bg-indigo-600 text-white px-6 py-3 rounded-2xl hover:bg-indigo-700 flex items-center gap-2 whitespace-nowrap">
-            <i class="fas fa-plus"></i> Add Product
-          </button>
+
+        <div class="flex gap-3 mb-4">
+          <input id="search" placeholder="Search..." onkeyup="filterProducts()" class="flex-1 px-4 py-2 border rounded-xl">
+          <button onclick="showAddProductModal()" class="bg-indigo-600 text-white px-4 rounded-xl">Add</button>
         </div>
 
-        <div class="bg-white rounded-3xl overflow-hidden shadow-sm">
-          <table class="w-full">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="py-4 px-6 text-left">Product</th>
-                <th class="py-4 px-6 text-left">Cost</th>
-                <th class="py-4 px-6 text-left">Selling</th>
-                <th class="py-4 px-6 text-center">Stock</th>
-                <th class="py-4 px-6 text-right">ROI</th>
-                <th class="py-4 px-6 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="products-table" class="divide-y"></tbody>
-          </table>
-        </div>
+        <table class="w-full bg-white rounded-xl overflow-hidden">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="p-3 text-left">Name</th>
+              <th class="p-3">Cost</th>
+              <th class="p-3">Sell</th>
+              <th class="p-3">Stock</th>
+              <th class="p-3">ROI</th>
+              <th class="p-3">Action</th>
+            </tr>
+          </thead>
+          <tbody id="products-table"></tbody>
+        </table>
       </div>
 
-      <!-- Cash Page -->
+      <!-- Cash -->
       <div id="cash-page" class="hidden">
-        <h3 class="text-xl font-semibold mb-6">Cash Transactions</h3>
-        <div id="cash-log" class="space-y-4"></div>
+        <div id="cash-log" class="space-y-3"></div>
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- Product Modal -->
-<div id="product-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-  <div class="bg-white rounded-3xl p-8 w-full max-w-md mx-4">
-    <h3 id="modal-title" class="text-2xl font-semibold mb-6">Add Product</h3>
-    <form id="product-form" class="space-y-5">
-      <input type="hidden" id="edit-id">
-      <input type="text" id="name" placeholder="Product Name" required class="w-full px-5 py-4 border border-gray-300 rounded-2xl">
-      <div class="grid grid-cols-2 gap-4">
-        <input type="number" id="cost" step="0.01" placeholder="Cost Price" required class="w-full px-5 py-4 border border-gray-300 rounded-2xl">
-        <input type="number" id="selling" step="0.01" placeholder="Selling Price" required class="w-full px-5 py-4 border border-gray-300 rounded-2xl">
-      </div>
-      <input type="number" id="stock" placeholder="Stock Quantity" value="0" class="w-full px-5 py-4 border border-gray-300 rounded-2xl">
-      <div class="flex gap-4 pt-4">
-        <button type="button" onclick="closeModal()" class="flex-1 py-4 border border-gray-300 rounded-2xl">Cancel</button>
-        <button type="submit" class="flex-1 py-4 bg-indigo-600 text-white rounded-2xl">Save</button>
-      </div>
+<!-- Modal -->
+<div id="product-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center">
+  <div class="bg-white p-6 rounded-2xl w-80">
+
+    <form id="product-form" class="space-y-3">
+      <input id="name" placeholder="Name" required class="w-full p-2 border rounded">
+      <input id="cost" type="number" placeholder="Cost" required class="w-full p-2 border rounded">
+      <input id="selling" type="number" placeholder="Selling" required class="w-full p-2 border rounded">
+      <input id="stock" type="number" placeholder="Stock" class="w-full p-2 border rounded">
+
+      <button class="w-full bg-indigo-600 text-white p-2 rounded">Save</button>
     </form>
+
   </div>
 </div>
 
 <script>
-// Data
 let products = JSON.parse(localStorage.getItem('products')) || [];
 let cashBalance = parseFloat(localStorage.getItem('cashBalance')) || 0;
 let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-let currentUser = '';
-
-// Charts
-let valueChart, roiChart;
 
 function login() {
-  const username = document.getElementById('username').value.trim().toLowerCase();
-  const password = document.getElementById('password').value;
-
-  if (username === "feluna" && password === "1234") {
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('main-app').classList.remove('hidden');
-    
-    // Ask who is using
-    currentUser = prompt("Welcome! Are you Feluna or Spudy?") || "User";
-    document.getElementById('welcome-user').textContent = `Welcome, ${currentUser}`;
-    
-    initDashboard();
-  } else {
-    alert("Incorrect username or password. Try: feluna / 1234");
-  }
-}
-
-function initDashboard() {
-  renderDashboard();
-  renderProducts();
-  showPage('dashboard');
-}
-
-// Render Dashboard + Charts
-function renderDashboard() {
-  document.getElementById('cash-balance').textContent = '$' + cashBalance.toFixed(2);
-  document.getElementById('cash-top').textContent = '$' + cashBalance.toFixed(2);
-  document.getElementById('total-products').textContent = products.length;
-
-  const totalValue = products.reduce((sum, p) => sum + (p.cost * p.stock), 0);
-  const profitPotential = products.reduce((sum, p) => sum + ((p.selling - p.cost) * p.stock), 0);
-
-  document.getElementById('inventory-value').textContent = '$' + totalValue.toFixed(2);
-  document.getElementById('profit-potential').textContent = '$' + profitPotential.toFixed(2);
-
-  updateCharts();
-}
-
-function updateCharts() {
-  // Value Chart
-  const ctx1 = document.getElementById('valueChart');
-  if (valueChart) valueChart.destroy();
-  valueChart = new Chart(ctx1, {
-    type: 'bar',
-    data: {
-      labels: products.map(p => p.name.length > 8 ? p.name.substring(0,8)+'..' : p.name),
-      datasets: [{
-        label: 'Inventory Value $',
-        data: products.map(p => p.cost * p.stock),
-        backgroundColor: '#6366f1'
-      }]
-    },
-    options: { responsive: true, maintainAspectRatio: false }
-  });
-
-  // ROI Chart
-  const ctx2 = document.getElementById('roiChart');
-  if (roiChart) roiChart.destroy();
-  roiChart = new Chart(ctx2, {
-    type: 'pie',
-    data: {
-      labels: products.map(p => p.name),
-      datasets: [{
-        data: products.map(p => ((p.selling - p.cost) / p.cost * 100).toFixed(1)),
-        backgroundColor: ['#4f46e5', '#7c3aed', '#ec4899', '#f43f5e', '#eab308']
-      }]
-    },
-    options: { responsive: true, maintainAspectRatio: false }
-  });
-}
-
-// Other functions (same as before with small improvements)
-function showPage(page) {
-  document.querySelectorAll('#main-app > div > div > div').forEach(div => div.classList.add('hidden'));
-  document.getElementById(page + '-page').classList.remove('hidden');
-  document.getElementById('page-title').textContent = page === 'dashboard' ? 'Dashboard' : page === 'products' ? 'Products' : 'Cash Flow';
-
-  if (page === 'products') renderProducts();
-  if (page === 'cash') renderCashLog();
-}
-
-function renderProducts(filtered = products) {
-  const tbody = document.getElementById('products-table');
-  tbody.innerHTML = filtered.map(p => `
-    <tr class="hover:bg-gray-50">
-      <td class="py-4 px-6 font-medium">${p.name}</td>
-      <td class="py-4 px-6">$${p.cost.toFixed(2)}</td>
-      <td class="py-4 px-6">$${p.selling.toFixed(2)}</td>
-      <td class="py-4 px-6 text-center">${p.stock}</td>
-      <td class="py-4 px-6 text-right text-emerald-600">${p.roi ? p.roi.toFixed(1) : 0}%</td>
-      <td class="py-4 px-6 text-center space-x-3">
-        <button onclick="editProduct('${p.id}')" class="text-indigo-600"><i class="fas fa-edit"></i></button>
-        <button onclick="deleteProduct('${p.id}')" class="text-red-600"><i class="fas fa-trash"></i></button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function renderCashLog() {
-  const div = document.getElementById('cash-log');
-  div.innerHTML = transactions.slice().reverse().map(t => `
-    <div class="flex justify-between items-center bg-white p-5 rounded-2xl border">
-      <div>
-        <p class="font-medium">${t.note}</p>
-        <p class="text-xs text-gray-500">${new Date(t.date).toLocaleString()}</p>
-      </div>
-      <p class="font-bold ${t.amount >= 0 ? 'text-emerald-600' : 'text-red-600'}">
-        ${t.amount >= 0 ? '+' : ''}$${Math.abs(t.amount).toFixed(2)}
-      </p>
-    </div>
-  `).join('');
-}
-
-// Modal & CRUD functions (same logic)
-let editingId = null;
-
-function showAddProductModal() {
-  editingId = null;
-  document.getElementById('modal-title').textContent = 'Add New Product';
-  document.getElementById('product-form').reset();
-  document.getElementById('product-modal').classList.remove('hidden');
-}
-
-function closeModal() {
-  document.getElementById('product-modal').classList.add('hidden');
-}
-
-document.getElementById('product-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const name = document.getElementById('name').value;
-  const cost = parseFloat(document.getElementById('cost').value);
-  const selling = parseFloat(document.getElementById('selling').value);
-  const stock = parseInt(document.getElementById('stock').value) || 0;
-
-  if (editingId) {
-    const p = products.find(x => x.id === editingId);
-    if (p) {
-      p.name = name; p.cost = cost; p.selling = selling; p.stock = stock;
-      p.roi = ((selling - cost) / cost * 100);
-    }
-  } else {
-    products.push({
-      id: Date.now().toString(),
-      name, cost, selling, stock,
-      roi: ((selling - cost) / cost * 100)
-    });
-  }
-
-  localStorage.setItem('products', JSON.stringify(products));
-  closeModal();
-  renderProducts();
-  renderDashboard();
-});
-
-function editProduct(id) {
-  const p = products.find(x => x.id === id);
-  if (!p) return;
-  editingId = id;
-  document.getElementById('modal-title').textContent = 'Edit Product';
-  document.getElementById('name').value = p.name;
-  document.getElementById('cost').value = p.cost;
-  document.getElementById('selling').value = p.selling;
-  document.getElementById('stock').value = p.stock;
-  document.getElementById('product-modal').classList.remove('hidden');
-}
-
-function deleteProduct(id) {
-  if (confirm('Delete this product?')) {
-    products = products.filter(p => p.id !== id);
-    localStorage.setItem('products', JSON.stringify(products));
-    renderProducts();
+  if (username.value === "feluna" && password.value === "1234") {
+    login-screen.classList.add('hidden');
+    main-app.classList.remove('hidden');
     renderDashboard();
   }
 }
 
-function filterProducts() {
-  const term = document.getElementById('search').value.toLowerCase();
-  const filtered = products.filter(p => p.name.toLowerCase().includes(term));
-  renderProducts(filtered);
+function showInvestedAmount() {
+  const invested = products.reduce((sum, p) => sum + (p.cost * p.stock), 0);
+  alert("Total Invested: $" + invested.toFixed(2));
 }
 
-function adjustCash() {
-  const amount = parseFloat(prompt('Enter amount (use - for subtract):'));
-  if (isNaN(amount)) return;
-  const note = prompt('Reason for adjustment:') || 'Manual adjustment';
+function renderDashboard() {
+  cash-balance.textContent = "$" + cashBalance.toFixed(2);
+  cash-top.textContent = "$" + cashBalance.toFixed(2);
+  total-products.textContent = products.length;
 
-  cashBalance += amount;
-  transactions.push({ date: new Date().toISOString(), amount, note });
+  let total = products.reduce((s,p)=>s+p.cost*p.stock,0);
+  let profit = products.reduce((s,p)=>s+(p.selling-p.cost)*p.stock,0);
 
-  localStorage.setItem('cashBalance', cashBalance);
-  localStorage.setItem('transactions', JSON.stringify(transactions));
+  inventory-value.textContent = "$"+total.toFixed(2);
+  profit-potential.textContent = "$"+profit.toFixed(2);
 
+  renderProducts();
+  updateChart();
+}
+
+function updateChart() {
+  const ctx = document.getElementById('roiChart');
+  new Chart(ctx, {
+    type:'pie',
+    data:{
+      labels: products.map(p=>p.name),
+      datasets:[{
+        data: products.map(p=>((p.selling-p.cost)/p.cost*100)||0),
+        backgroundColor:['#6366f1','#a855f7','#f43f5e','#10b981','#f59e0b']
+      }]
+    }
+  });
+}
+
+function showPage(p){
+  document.querySelectorAll('[id$="-page"]').forEach(x=>x.classList.add('hidden'));
+  document.getElementById(p+'-page').classList.remove('hidden');
+}
+
+function renderProducts(list=products){
+  products-table.innerHTML = list.map(p=>`
+    <tr>
+      <td class="p-2">${p.name}</td>
+      <td class="p-2">$${p.cost}</td>
+      <td class="p-2">$${p.selling}</td>
+      <td class="p-2">${p.stock}</td>
+      <td class="p-2">${((p.selling-p.cost)/p.cost*100).toFixed(1)}%</td>
+      <td class="p-2"><button onclick="deleteProduct('${p.id}')">❌</button></td>
+    </tr>
+  `).join('');
+}
+
+function deleteProduct(id){
+  products = products.filter(p=>p.id!==id);
+  localStorage.setItem('products',JSON.stringify(products));
   renderDashboard();
-  if (!document.getElementById('cash-page').classList.contains('hidden')) renderCashLog();
 }
 
-// Keyboard support for mobile
-document.addEventListener('keydown', (e) => {
-  if (e.key === "Escape") {
-    const modal = document.getElementById('product-modal');
-    if (!modal.classList.contains('hidden')) closeModal();
+function filterProducts(){
+  let t = search.value.toLowerCase();
+  renderProducts(products.filter(p=>p.name.toLowerCase().includes(t)));
+}
+
+function showAddProductModal(){
+  product-modal.classList.remove('hidden');
+}
+
+product-form.onsubmit = e=>{
+  e.preventDefault();
+  products.push({
+    id:Date.now(),
+    name:name.value,
+    cost:+cost.value,
+    selling:+selling.value,
+    stock:+stock.value
+  });
+  localStorage.setItem('products',JSON.stringify(products));
+  product-modal.classList.add('hidden');
+  renderDashboard();
+}
+
+function adjustCash(){
+  let a = parseFloat(prompt("Amount:"));
+  if(!isNaN(a)){
+    cashBalance+=a;
+    localStorage.setItem('cashBalance',cashBalance);
+    renderDashboard();
   }
-});
+}
 </script>
+
 </body>
 </html>
